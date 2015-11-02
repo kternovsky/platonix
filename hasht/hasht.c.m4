@@ -133,14 +133,14 @@ static int hasht_fetch_internal(struct HASHT_NAME *t, HASHT_KEY_TYPE k, struct H
 		{
 			if(HASHT_KEY_CMP(t->data[t->data[pos].next].entry.key, k))
 			{
+				r->key = t->data[t->data[pos].next].entry.key;
+				r->value = t->data[t->data[pos].next].entry.value;
 				if(del)
 				{
 					t->free = t->data[t->data[pos].next].next;
 					t->data[pos].next = t->data[t->data[pos].next].next;
 					t->sz--;
 				}
-				r->key = t->data[t->data[pos].next].entry.key;
-				r->value = t->data[t->data[pos].next].entry.value;
 				return 0;
 			}
 		}
