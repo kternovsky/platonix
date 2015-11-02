@@ -15,7 +15,8 @@ struct HEAP_NAME
 	HEAP_EXTRA_MEMBERS
 };
 
-void HEAP_NAME`'_push(struct HEAP_NAME *h, HEAP_DATA_TYPE val);
-void HEAP_NAME`'_pop(struct HEAP_NAME *h, HEAP_DATA_TYPE *val);
+void HEAP_NAME`'_push(struct HEAP_NAME *, HEAP_DATA_TYPE);
+void HEAP_NAME`'_pop(struct HEAP_NAME *, HEAP_DATA_TYPE *);
+void HEAP_NAME`'_fix(struct HEAP_NAME *);
 
 #endif

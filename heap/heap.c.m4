@@ -22,6 +22,21 @@ void HEAP_NAME`'_pop(struct HEAP_NAME *h, HEAP_DATA_TYPE *val)
 	if(h->sz) heapify_down(h);
 }
 
+void HEAP_NAME`'_fix(struct HEAP_NAME *h)
+{
+	size_t sz = h->sz;
+
+	h->sz /= 2;
+	h->data += h->sz;
+
+	while(h->sz < sz)
+	{
+		heapify_down(h);
+		h->sz++;
+		h->data--;
+	}
+}
+
 static void heapify_up(struct HEAP_NAME *h)
 {
 	HEAP_DATA_TYPE tmp;
