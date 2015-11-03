@@ -20,3 +20,5 @@ static size_t djb2(const int k)
 
 	return hash;
 }')dnl;
+ifdef(`MODE_HEADER',`include(`hasht.h.m4')')dnl
+ifdef(`MODE_IMPL',`include(`hasht.c.m4')')dnl

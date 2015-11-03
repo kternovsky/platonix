@@ -1,11 +1,13 @@
 dnl Hash table based on Simon Cooper's discussion of the .NET Dictionary
 dnl implementation
-define(`HASHT_C_PREAMBLE',`')dnl
-include(HASHT_CONFIG)dnl
+dnl define(`HASHT_C_PREAMBLE',`')dnl
+dnl include(CONFIG)dnl
 `#include' "HASHT_HEADER"
-
-HASHT_C_PREAMBLE
-
+`#include' <assert.h>
+`#include' <stdio.h>
+`#include' <string.h>
+`#include' <stdlib.h>
+ifdef(`HASHT_C_PREAMBLE',HASHT_C_PREAMBLE)
 static size_t hasht_next_pos(struct HASHT_NAME *);
 static int hasht_fetch_internal(struct HASHT_NAME *, HASHT_KEY_TYPE, struct HASHT_NAME`'_entry *, const int);
 
@@ -23,6 +25,67 @@ void HASHT_NAME`'_init(struct HASHT_NAME *t)
 	t->cursor = 0;
 	t->free = -1;
 }
+
+dnl DO THIS DUMB WAY FIRST
+void HASHT_NAME`'_rehash(struct HASHT_NAME *t, const size_t pcap)
+{
+	size_t i;
+	size_t np;
+	size_t *new_idxs = malloc(t->cap * sizeof *new_idxs);
+
+	for(i = 0; i < t->cap; i++) new_idxs[i] = -1;
+
+	for(i = 0; i < pcap; i++)
+	{
+		if(t->index[i] == -1) continue;
+
+		np = t->data[t->index[i]].hash % t->cap;
+		new_idxs[np] = t->index[i];
+	}
+
+	memcpy(t->index, new_idxs, t->cap * sizeof *new_idxs);
+
+	free(new_idxs);
+}
+
+dnl void HASHT_NAME`'_rehash(struct HASHT_NAME *t, const size_t pcap)
+dnl {
+	dnl size_t i;
+	dnl size_t free = t->cap - 1;
+	dnl size_t np;
+dnl 
+	dnl for(i = pcap; i < t->cap; i++) t->index[i] = -1;
+dnl 
+	dnl for(i = 0; i < pcap; i++)
+	dnl {
+		dnl if(t->index[i] != -1)
+		dnl {
+			dnl np = t->data[t->index[i]].hash % t->cap;
+			dnl if(np < i)
+			dnl {
+				dnl puts("oh look wegot a free slot behind us");
+				dnl assert(t->index[np] == -1);
+				dnl t->index[np] = t->index[i];
+				dnl t->index[i] = -1;
+			dnl }
+			dnl else if(np > i)
+			dnl {
+				dnl puts("weirndess");
+dnl dnl TODO: some math to see if it's possible to just move it to correct place
+				dnl t->index[free--] = t->index[i];
+				dnl t->index[i] = -1;
+			dnl }
+		dnl }
+	dnl }
+dnl 
+	dnl while(++free < t->cap)
+	dnl {
+		dnl np = t->data[t->index[free]].hash % t->cap;
+		dnl assert(t->index[np] == -1);
+		dnl t->index[np] = t->index[free];
+		dnl t->index[free] = -1;
+	dnl }
+dnl }
 
 int HASHT_NAME`'_ins(struct HASHT_NAME *t, HASHT_KEY_TYPE k, HASHT_VAL_TYPE v)
 {

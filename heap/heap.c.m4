@@ -1,5 +1,4 @@
 dnl Simple binary heap
-include(HEAP_CONFIG)dnl
 `#include' "HEAP_HEADER"
 #define heap_parent(i) ((i - 1) / 2)
 #define heap_left(i) ((2 * (i)) + 1)

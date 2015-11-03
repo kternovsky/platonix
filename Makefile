@@ -1,32 +1,29 @@
 CFLAGS=-std=c99 -Wall -pedantic -g
 
-.PHONY: all clean
+.PHONY: all clean examples
 
-all: median heapsort counter
+.PRECOUS: examples/hasht_ii.c
 
-median: median.c heap_intn.o heap_intx.o
+vpath %.m4 hasht:heap
 
-heapsort: heapsort.c heap_intn.o
+examples: examples/median examples/heapsort examples/counter examples/rehash
 
-counter: counter.c hasht_ii.o
+examples/median: examples/median.c examples/heap_intn.o examples/heap_intx.o | examples/heap_intx.h
 
-heap_intx.h: heap_intx.m4
-	m4 -DHEAP_CONFIG=heap_intx.m4 heap/heap.h.m4 > $@
+examples/heapsort: examples/heapsort.c examples/heap_intn.o | examples/heap_intn.h
 
-heap_intx.c: heap_intx.m4 heap_intx.h
-	m4 -DHEAP_CONFIG=heap_intx.m4 heap/heap.c.m4 > $@
+examples/counter: examples/counter.c examples/hasht_ii.o | examples/hasht_ii.h
 
-heap_intn.h: heap_intn.m4
-	m4 -DHEAP_CONFIG=heap_intn.m4 heap/heap.h.m4 > $@
+examples/rehash: examples/rehash.c examples/hasht_ii.o | examples/hasht_ii.h
 
-heap_intn.c: heap_intn.m4 heap_intn.h
-	m4 -DHEAP_CONFIG=heap_intn.m4 heap/heap.c.m4 > $@
+examples/hasht_%.h: examples/hasht_%.m4 hasht.h.m4
+	m4 -Ihasht -DMODE_HEADER $< >$@
 
-hasht_ii.h: hasht_ii.m4
-	m4 -DHASHT_CONFIG=$< hasht/hasht.h.m4 > $@
+examples/hasht_%.c: examples/hasht_%.m4 examples/hasht_%.h hasht.c.m4
+	m4 -Ihasht -DMODE_IMPL $< >$@
 
-hasht_ii.c: hasht_ii.m4 hasht_ii.h
-	m4 -DHASHT_CONFIG=$< hasht/hasht.c.m4 > $@
+examples/heap_%.h: examples/heap_%.m4 heap.h.m4
+	m4 -Iheap -DMODE_HEADER $< >$@
 
-clean:
-	-@rm heap_intx.c heap_intx.h heap_intn.c heap_intn.h hasht_ii.c hasht_ii.h median heapsort counter *.o
+examples/heap_%.c: examples/heap_%.m4 examples/heap_%.h heap.c.m4
+	m4 -Iheap -DMODE_IMPL $< >$@
