@@ -1,5 +1,7 @@
 dnl define(`HASHT_H_PREAMBLE',`')dnl
 dnl define(`HASHT_EXTRA_MEMBERS',`')dnl
+`#ifndef' HASHT_NAME`'_H_
+`#define' HASHT_NAME`'_H_
 `#include' <stddef.h>
 ifdef(`HASHT_H_PREAMBLE',HASHT_H_PREAMBLE)dnl
 struct HASHT_NAME`'_entry
@@ -29,7 +31,8 @@ struct HASHT_NAME
 void HASHT_NAME`'_init(struct HASHT_NAME *);
 void HASHT_NAME`'_rehash(struct HASHT_NAME *, const size_t);
 int HASHT_NAME`'_ins(struct HASHT_NAME *, HASHT_KEY_TYPE, HASHT_VAL_TYPE);
-int HASHT_NAME`'_udpate(struct HASHT_NAME *, HASHT_KEY_TYPE, HASHT_VAL_TYPE);
+int HASHT_NAME`'_update(struct HASHT_NAME *, HASHT_KEY_TYPE, HASHT_VAL_TYPE);
 int HASHT_NAME`'_get(struct HASHT_NAME *, HASHT_KEY_TYPE, struct HASHT_NAME`'_entry *);
 int HASHT_NAME`'_del(struct HASHT_NAME *, HASHT_KEY_TYPE, struct HASHT_NAME`'_entry *);
 int HASHT_NAME`'_has(struct HASHT_NAME *, HASHT_KEY_TYPE);
+#endif
