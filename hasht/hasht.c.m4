@@ -3,13 +3,13 @@ dnl implementation
 dnl define(`HASHT_C_PREAMBLE',`')dnl
 dnl include(CONFIG)dnl
 `#include' "HASHT_HEADER"
-`#include' <assert.h>
 `#include' <stdio.h>
 `#include' <string.h>
 `#include' <stdlib.h>
+ifdef(`DEBUG',``#include' <assert.h>')
 ifdef(`HASHT_C_PREAMBLE',HASHT_C_PREAMBLE)
 static size_t hasht_next_pos(struct HASHT_NAME *);
-static int hasht_fetch_internal(struct HASHT_NAME *, HASHT_KEY_TYPE, struct HASHT_NAME`'_entry *, const int);
+static int hasht_fetch_internal(struct HASHT_NAME *, HASHT_KEY_TYPE, size_t *, const int);
 
 void HASHT_NAME`'_init(struct HASHT_NAME *t)
 {
@@ -93,6 +93,8 @@ int HASHT_NAME`'_ins(struct HASHT_NAME *t, HASHT_KEY_TYPE k, HASHT_VAL_TYPE v)
 	const size_t pos = hasht_next_pos(t);
 	size_t idx = hash % t->cap;
 
+	ifdef(`DEBUG',`assert(t->sz < t->cap);')dnl
+
 	if(t->index[idx] == -1)
 		t->index[idx] = pos;
 	else
@@ -115,12 +117,18 @@ int HASHT_NAME`'_ins(struct HASHT_NAME *t, HASHT_KEY_TYPE k, HASHT_VAL_TYPE v)
 
 int HASHT_NAME`'_get(struct HASHT_NAME *t, HASHT_KEY_TYPE k, struct HASHT_NAME`'_entry *r)
 {
-	return hasht_fetch_internal(t, k, r, 0);
+	size_t rp;
+	if(hasht_fetch_internal(t, k, &rp, 0)) return 1;
+	*r = t->data[rp].entry;
+	return 0;
 }
 
 int HASHT_NAME`'_del(struct HASHT_NAME *t, HASHT_KEY_TYPE k, struct HASHT_NAME`'_entry *r)
 {
-	return hasht_fetch_internal(t, k, r, 1);
+	size_t rp;
+	if(hasht_fetch_internal(t, k, &rp, 1)) return 1;
+	*r = t->data[rp].entry;
+	return 0;
 }
 
 int HASHT_NAME`'_has(struct HASHT_NAME *t, HASHT_KEY_TYPE k)
@@ -129,7 +137,7 @@ int HASHT_NAME`'_has(struct HASHT_NAME *t, HASHT_KEY_TYPE k)
 	const size_t idx = hash % t->cap;
 	size_t pos = t->index[idx];
 
-	if(pos == -1) return 1;
+	if(pos == -1) return 0;
 
 	if(t->data[pos].hash == hash && (HASHT_KEY_CMP(k, t->data[pos].entry.key)))
 		return 1;
@@ -138,11 +146,21 @@ int HASHT_NAME`'_has(struct HASHT_NAME *t, HASHT_KEY_TYPE k)
 	{
 		if(t->data[t->data[pos].next].hash == hash &&
 			(HASHT_KEY_CMP(t->data[t->data[pos].next].entry.key, k)))
-			return 0;
+			return 1;
 
 		pos = t->data[pos].next;
 	}
 	
+	return 0;
+}
+
+dnl This is a terrible method but it'll work for now
+int HASHT_NAME`'_update(struct HASHT_NAME *t, HASHT_KEY_TYPE k, HASHT_VAL_TYPE v)
+{
+	size_t rp;
+	if(hasht_fetch_internal(t, k, &rp, 0)) return 1;
+
+	t->data[rp].entry.value = v;
 	return 0;
 }
 
@@ -156,6 +174,8 @@ dnl data there.
 		return t->cursor ++;
 dnl Otherwise, we're out of regular room. So we'll use the head of our free list
 dnl and adjust the free list to point to the next item.
+	ifdef(`DEBUG',`assert(t->sz < t->cap)');
+	ifdef(`DEBUG',`assert(t->free != -1)');
 	idx = t->free;
 
 	if(t->data[t->free].next != -1)
@@ -166,7 +186,7 @@ dnl and adjust the free list to point to the next item.
 	return idx;
 }
 
-static int hasht_fetch_internal(struct HASHT_NAME *t, HASHT_KEY_TYPE k, struct HASHT_NAME`'_entry *r, const int del)
+static int hasht_fetch_internal(struct HASHT_NAME *t, HASHT_KEY_TYPE k, size_t *rp, const int del)
 {
 	const size_t hash = HASHT_HASH(k);
 	const size_t idx = hash % t->cap;
@@ -180,12 +200,12 @@ static int hasht_fetch_internal(struct HASHT_NAME *t, HASHT_KEY_TYPE k, struct H
 		{
 			if(del)
 			{
-				t->free = pos;
 				t->index[idx] = t->data[pos].next;
+				t->data[pos].next = t->free;
+				t->free = pos;
 				t->sz--;
 			}
-			r->key = t->data[pos].entry.key;
-			r->value = t->data[pos].entry.value;
+			*rp = pos;
 			return 0;
 		}
 	}
@@ -196,12 +216,13 @@ static int hasht_fetch_internal(struct HASHT_NAME *t, HASHT_KEY_TYPE k, struct H
 		{
 			if(HASHT_KEY_CMP(t->data[t->data[pos].next].entry.key, k))
 			{
-				r->key = t->data[t->data[pos].next].entry.key;
-				r->value = t->data[t->data[pos].next].entry.value;
+				size_t actual = t->data[pos].next;
+				*rp = actual;
 				if(del)
 				{
-					t->free = t->data[t->data[pos].next].next;
-					t->data[pos].next = t->data[t->data[pos].next].next;
+					t->data[pos].next = t->data[actual].next;
+					t->data[actual].next = t->free;
+					t->free = actual;
 					t->sz--;
 				}
 				return 0;
