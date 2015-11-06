@@ -4,13 +4,14 @@ dnl Simple binary heap
 #define heap_left(i) ((2 * (i)) + 1)
 #define heap_right(i) ((2 * (i)) + 2)
 
-static void heapify_up(struct HEAP_NAME *h);
-static void heapify_down(struct HEAP_NAME *h);
+static void heapify_up(struct HEAP_NAME *h, const size_t);
+static void heapify_down(struct HEAP_NAME *h, const size_t);
 
 void HEAP_NAME`'_push(struct HEAP_NAME *h, HEAP_DATA_TYPE val)
 {
-	h->data[h->sz++] = val;
-	heapify_up(h);
+	h->data[h->sz] = val;
+	ifdef(`HEAP_STORE_INDEX',HEAP_STORE_INDEX(h, h->sz);)
+	heapify_up(h, h->sz++);
 }
 
 void HEAP_NAME`'_pop(struct HEAP_NAME *h, HEAP_DATA_TYPE *val)
@@ -18,7 +19,7 @@ void HEAP_NAME`'_pop(struct HEAP_NAME *h, HEAP_DATA_TYPE *val)
 	*val = h->data[0];
 	h->data[0] = h->data[--h->sz];
 
-	if(h->sz) heapify_down(h);
+	if(h->sz) heapify_down(h, 0);
 }
 
 void HEAP_NAME`'_fix(struct HEAP_NAME *h)
@@ -30,16 +31,28 @@ void HEAP_NAME`'_fix(struct HEAP_NAME *h)
 
 	while(h->sz < sz)
 	{
-		heapify_down(h);
+		heapify_down(h, 0);
 		h->sz++;
 		h->data--;
 	}
 }
 
-static void heapify_up(struct HEAP_NAME *h)
+ifdef(`HEAP_STORE_INDEX',`
+void HEAP_NAME`'_keydn(struct HEAP_NAME *h, const size_t t, const size_t k)
+{
+	HEAP_STORE_INDEX(h, k);
+	heapify_down(h, t);
+}
+void HEAP_NAME`'_keyup(struct HEAP_NAME *h, const size_t t, const size_t k)
+{
+	HEAP_STORE_INDEX(h, k);
+	heapify_up(h, t);
+}')dnl
+
+static void heapify_up(struct HEAP_NAME *h, const size_t start)
 {
 	HEAP_DATA_TYPE tmp;
-	size_t i = h->sz - 1, parent;
+	size_t i = start, parent;
 
 	while(i)
 	{
@@ -49,16 +62,18 @@ static void heapify_up(struct HEAP_NAME *h)
 		{
 			tmp = h->data[i];
 			h->data[i] = h->data[parent];
+			ifdef(`HEAP_STORE_INDEX',HEAP_STORE_INDEX(h, i);)
 			h->data[parent] = tmp;
+			ifdef(`HEAP_STORE_INDEX',HEAP_STORE_INDEX(h, parent);)
 		}
 
 		i = parent;
 	}
 }
 
-static void heapify_down(struct HEAP_NAME *h)
+static void heapify_down(struct HEAP_NAME *h, const size_t start)
 {
-	size_t i = 0, l, r;
+	size_t i = start, l, r;
 	size_t maxi;
 	HEAP_DATA_TYPE tmp;
 
@@ -78,7 +93,9 @@ static void heapify_down(struct HEAP_NAME *h)
 
 		tmp = h->data[maxi];
 		h->data[maxi] = h->data[i];
+		ifdef(`HEAP_STORE_INDEX',HEAP_STORE_INDEX(h, maxi);)dnl
 		h->data[i] = tmp;
+		ifdef(`HEAP_STORE_INDEX',HEAP_STORE_INDEX(h, i);)dnl
 		i = maxi;
 	}
 }
