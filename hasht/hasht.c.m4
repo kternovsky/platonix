@@ -26,26 +26,21 @@ void HASHT_NAME`'_init(struct HASHT_NAME *t)
 	t->free = -1;
 }
 
-dnl DO THIS DUMB WAY FIRST
-void HASHT_NAME`'_rehash(struct HASHT_NAME *t, const size_t pcap)
+int HASHT_NAME`'_init2(struct HASHT_NAME *r, const struct HASHT_NAME *s)
 {
 	size_t i;
-	size_t np;
-	size_t *new_idxs = malloc(t->cap * sizeof *new_idxs);
 
-	for(i = 0; i < t->cap; i++) new_idxs[i] = -1;
+	if(s->sz > r->cap)
+		return 1;
 
-	for(i = 0; i < pcap; i++)
-	{
-		if(t->index[i] == -1) continue;
+dnl Copy over all the real data
+	memcpy(r->data, s->data, sizeof *s->data * s->cap);
 
-		np = t->data[t->index[i]].hash % t->cap;
-		new_idxs[np] = t->index[i];
-	}
+	for(i = 0; i < s->sz; i++)
+		if(s->index[i] != -1)
+			r->index[s->data[s->index[i]].hash % r->cap] = s->index[i];
 
-	memcpy(t->index, new_idxs, t->cap * sizeof *new_idxs);
-
-	free(new_idxs);
+	return 0;
 }
 
 int HASHT_NAME`'_ins(struct HASHT_NAME *t, HASHT_KEY_TYPE k, HASHT_VAL_TYPE v)
