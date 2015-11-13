@@ -1,0 +1,12 @@
+*.dSYM
+*.o
+examples/counter
+examples/median
+examples/rehash
+examples/heapsort
+examples/hasht_ii.c
+examples/hasht_ii.h
+examples/heap_intn.c
+examples/heap_intn.h
+examples/heap_intx.c
+examples/heap_intx.h
