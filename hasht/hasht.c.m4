@@ -48,45 +48,6 @@ void HASHT_NAME`'_rehash(struct HASHT_NAME *t, const size_t pcap)
 	free(new_idxs);
 }
 
-dnl void HASHT_NAME`'_rehash(struct HASHT_NAME *t, const size_t pcap)
-dnl {
-	dnl size_t i;
-	dnl size_t free = t->cap - 1;
-	dnl size_t np;
-dnl 
-	dnl for(i = pcap; i < t->cap; i++) t->index[i] = -1;
-dnl 
-	dnl for(i = 0; i < pcap; i++)
-	dnl {
-		dnl if(t->index[i] != -1)
-		dnl {
-			dnl np = t->data[t->index[i]].hash % t->cap;
-			dnl if(np < i)
-			dnl {
-				dnl puts("oh look wegot a free slot behind us");
-				dnl assert(t->index[np] == -1);
-				dnl t->index[np] = t->index[i];
-				dnl t->index[i] = -1;
-			dnl }
-			dnl else if(np > i)
-			dnl {
-				dnl puts("weirndess");
-dnl dnl TODO: some math to see if it's possible to just move it to correct place
-				dnl t->index[free--] = t->index[i];
-				dnl t->index[i] = -1;
-			dnl }
-		dnl }
-	dnl }
-dnl 
-	dnl while(++free < t->cap)
-	dnl {
-		dnl np = t->data[t->index[free]].hash % t->cap;
-		dnl assert(t->index[np] == -1);
-		dnl t->index[np] = t->index[free];
-		dnl t->index[free] = -1;
-	dnl }
-dnl }
-
 int HASHT_NAME`'_ins(struct HASHT_NAME *t, HASHT_KEY_TYPE k, HASHT_VAL_TYPE v)
 {
 	const size_t hash = HASHT_HASH(k);
@@ -154,7 +115,6 @@ int HASHT_NAME`'_has(struct HASHT_NAME *t, HASHT_KEY_TYPE k)
 	return 0;
 }
 
-dnl This is a terrible method but it'll work for now
 int HASHT_NAME`'_update(struct HASHT_NAME *t, HASHT_KEY_TYPE k, HASHT_VAL_TYPE v)
 {
 	size_t rp;
