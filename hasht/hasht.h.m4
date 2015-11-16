@@ -1,7 +1,3 @@
-`#ifndef' HASHT_NAME`'_H_
-`#define' HASHT_NAME`'_H_
-`#include' <stddef.h>
-ifdef(`HASHT_H_PREAMBLE',HASHT_H_PREAMBLE)dnl
 struct HASHT_NAME`'_entry
 {
 	HASHT_KEY_TYPE key;
@@ -33,4 +29,3 @@ int HASHT_NAME`'_update(struct HASHT_NAME *, HASHT_KEY_TYPE, HASHT_VAL_TYPE);
 int HASHT_NAME`'_get(struct HASHT_NAME *, HASHT_KEY_TYPE, struct HASHT_NAME`'_entry *);
 int HASHT_NAME`'_del(struct HASHT_NAME *, HASHT_KEY_TYPE, struct HASHT_NAME`'_entry *);
 int HASHT_NAME`'_has(struct HASHT_NAME *, HASHT_KEY_TYPE);
-#endif
