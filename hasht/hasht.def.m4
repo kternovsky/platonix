@@ -18,3 +18,13 @@ popdef(`HASHT_HASH')dnl
 popdef(`HASHT_KEY_CMP')dnl
 HASHT_INTERFACE
 ')')dnl
+define(`HASHT_IMPLEMENTATION',`ifelse(HASHT_DEF_COUNT, `0', `',`dnl
+include(hasht.c.m4)dnl
+popdef(`HASHT_DEF_COUNT')dnl
+popdef(`HASHT_NAME')dnl
+popdef(`HASHT_KEY_TYPE')dnl
+popdef(`HASHT_VAL_TYPE')dnl
+popdef(`HASHT_HASH')dnl
+popdef(`HASHT_KEY_CMP')dnl
+HASHT_INTERFACE
+')')dnl
