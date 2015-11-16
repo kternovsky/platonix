@@ -1,5 +1,3 @@
-dnl define(`HASHT_H_PREAMBLE',`')dnl
-dnl define(`HASHT_EXTRA_MEMBERS',`')dnl
 `#ifndef' HASHT_NAME`'_H_
 `#define' HASHT_NAME`'_H_
 `#include' <stddef.h>
