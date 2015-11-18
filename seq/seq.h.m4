@@ -1,8 +1,9 @@
-define(`SEQ_OPS',`int (*read)(void *, $1 *);
-int (*next)(void *);
+define(`SEQ_OPS',`int (*read)(struct SEQ_NAME *, $1 *);
+int (*next)(struct SEQ_NAME *);
 ')dnl
-define(`SEQ_BI_OPS',`int (*prev)(void *);')dnl
-define(`SEQ_RAND_OPS',`int (*to)(void *, const size_t);')dnl
+define(`SEQ_BI_OPS',`int (*prev)(struct SEQ_NAME *);')dnl
+define(`SEQ_RAND_OPS',`int (*to)(struct SEQ_NAME *, const size_t);')dnl
+struct SEQ_NAME;
 struct SEQ_NAME`'_ops
 {
 	SEQ_OPS(SEQ_TYPE)
