@@ -13,9 +13,3 @@ struct seq
 	struct seq_ops *ops;
 	unsigned flags;
 };
-
-int seq_read(struct seq *, void *);
-int seq_write(struct seq *, void *);
-int seq_next(struct seq *);
-int seq_prev(struct seq *);
-int seq_to(struct seq *, const size_t);
