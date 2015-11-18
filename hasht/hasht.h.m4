@@ -42,13 +42,7 @@ undefine(HASHT_SEQ_CTX_DEF)dnl
 undefine(HASHT_CTX)dnl
 dnl
 ifelse(HASHT_KEY_SEQ,`!', `', `include(hasht.kseq.h.m4)')dnl
-ifelse(HASHT_VAL_SEQ,`!', `', `dnl
-struct HASHT_NAME`'_vseq
-{
-	HASHT_VAL_SEQ seq;
-	struct HASHT_NAME`'_seq_ctx ctx;
-};
-int HASHT_NAME`'_vals(struct HASHT_NAME`'_vseq *, const struct HASHT_NAME *);')
+ifelse(HASHT_VAL_SEQ,`!', `', `include(hasht.vseq.h.m4)')dnl
 
 void HASHT_NAME`'_init(struct HASHT_NAME *);
 int HASHT_NAME`'_init2(struct HASHT_NAME *, const struct HASHT_NAME *);

@@ -9,6 +9,7 @@ static size_t HASHT_NAME`'_next_pos(struct HASHT_NAME *);
 static int HASHT_NAME`'_fetch_internal(struct HASHT_NAME *, HASHT_KEY_TYPE, size_t *, const int);
 
 ifelse(`HASHT_KEY_SEQ',`!',`',`include(hasht.kseq.c.m4)')dnl
+ifelse(`HASHT_VAL_SEQ',`!',`',`include(hasht.vseq.c.m4)')dnl
 
 void HASHT_NAME`'_init(struct HASHT_NAME *t)
 {
