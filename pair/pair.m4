@@ -1,5 +1,5 @@
 ifdef(`PAIR_M4',,`define(`PAIR_M4',1)dnl
-include(util/arr.m4)dnl
+include(_util/arr.m4)dnl
 divert(-1)
 pushdef(`$$pair_defs', `0')
 
@@ -20,6 +20,6 @@ define(`$$pair_pop', `dnl
 define(`$$pair_dupdef', `errprint(`Could not create pair<$2, $3> definition $1.', _get(`PAIR_DEFINITIONS', `$2_$3'), `is already a pair<$2, $3>.')')
 
 define(`PAIR_DEFINITION', `ifdef(`PAIR_DEFINITIONS[$2_$3]', `indir(`$$pair_dupdef', $@)', `indir(`$$pair_mkdef', `$1', `$2', `$3')')')
-define(`PAIR_INTERFACE', `include(pair/pair.h.m4) indir(`$$pair_pop')')dnl
+define(`PAIR_INTERFACE', `include(_gen/pair/pair.h.m4) indir(`$$pair_pop')')dnl
 divert dnl
 ')

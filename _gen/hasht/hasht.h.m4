@@ -1,3 +1,9 @@
+define(`HASHT_NAME', indir(`$$hasht_typename'))
+define(`HASHT_KEY_TYPE', indir(`$$hasht_key_type'))
+define(`HASHT_VAL_TYPE', indir(`$$hasht_val_type'))
+ifelse(translit(indir(`$$hasht_key_seq'), ` '), `', `', `define(`HASHT_KEY_SEQ', translit(indir(`$$hasht_key_seq'), ` '))')
+ifelse(translit(indir(`$$hasht_val_seq'), ` '), `', `', `define(`HASHT_VAL_SEQ', translit(indir(`$$hasht_val_seq'), ` '))')
+ifelse(translit(indir(`$$hasht_kvp_seq'), ` '), `', `', `define(`HASHT_KVP_SEQ', translit(indir(`$$hasht_kvp_seq'), ` '))')
 struct HASHT_NAME`'_entry
 {
 	HASHT_KEY_TYPE key;
@@ -41,8 +47,8 @@ dnl
 undefine(HASHT_SEQ_CTX_DEF)dnl
 undefine(HASHT_CTX)dnl
 dnl
-ifelse(HASHT_KEY_SEQ,`!', `', `include(hasht.kseq.h.m4)')dnl
-ifelse(HASHT_VAL_SEQ,`!', `', `include(hasht.vseq.h.m4)')dnl
+ifelse(HASHT_KEY_SEQ,`!', `', `include(_gen/hasht/hasht.kseq.h.m4)')dnl
+ifelse(HASHT_VAL_SEQ,`!', `', `include(_gen/hasht/hasht.vseq.h.m4)')dnl
 
 void HASHT_NAME`'_init(struct HASHT_NAME *);
 int HASHT_NAME`'_init2(struct HASHT_NAME *, const struct HASHT_NAME *);
