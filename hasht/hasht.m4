@@ -16,9 +16,7 @@ define(`$$hasht_mkdef', `dnl
 	pushdef(`$$hasht_key_seq', _get(SEQ_DEFINITIONS, indir(`$$hasht_key_type')))dnl
 	pushdef(`$$hasht_val_seq', _get(SEQ_DEFINITIONS, indir(`$$hasht_val_type')))dnl
 	pushdef(`$$hasht_kvp_seq', _get(SEQ_DEFINITIONS, _get(PAIR_DEFINITIONS, indir(`$$hasht_key_type')_`'indir(`$$hasht_val_type'))))dnl
-	dnl pushdef(`$$hasht_key_seq', defn(SEQ_DEFINITIONS[indir(`$$hasht_key_type')]))dnl
-	dnl pushdef(`$$hasht_val_seq', defn(SEQ_DEFINITIONS[indir(`$$hasht_val_type')]))dnl
-	dnl pushdef(`$$hasht_kvp_seq', `struct 'SEQ_DEFINITIONS[PAIR_DEFINITIONS[indir(`$$hasht_key_type')_`'indir(`$$hasht_val_type')]])dnl
+	define(`$$$test', _get(SEQ_DEFINITIONS, `struct '_get(PAIR_DEFINITIONS, indir(`$$hasht_key_type')_`'indir(`$$hasht_val_type'))))dnl
 ')dnl
 
 define(`$$hasht_pop', `
@@ -30,7 +28,7 @@ define(`$$hasht_pop', `
 	popdef(`$$hasht_key_eq')dnl
 ')dnl
 
-define(`$$hasht_dupdef', `errprint(`Could not create hasht<$2, $3> definition $1', _get(`HASHT_DEFINITIONS', `$2_$3'), `is already a hasht<$2, $3>.')')
+define(`$$hasht_dupdef', `errprint(`Could not create hasht<$2, $3> definition $1.', _get(`HASHT_DEFINITIONS', `$2_$3'), `is already a hasht<$2, $3>.')')
 define(`HASHT_DEFINITION', `ifdef(`HASHT_DEFINITIONS[$2_$3]', `indir(`$$hasht_dupdef', $@)', `indir(`$$hasht_mkdef', $@)')')
 divert dnl
 ')
@@ -42,4 +40,3 @@ SEQ_INTERFACE
 SEQ_DEFINITION(`seq_iip', `struct pair_ii')
 SEQ_INTERFACE
 HASHT_DEFINITION(`hasht_ii', `int', `int', `djb2', `$1 == $2')
-dumpdef
