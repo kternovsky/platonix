@@ -1,10 +1,5 @@
 dnl Hash table based on Simon Cooper's discussion of the .NET Dictionary
 dnl implementation
-`#include' <stdio.h>
-`#include' <string.h>
-`#include' <stdlib.h>
-ifdef(`DEBUG',``#include' <assert.h>')
-ifdef(`HASHT_C_PREAMBLE',HASHT_C_PREAMBLE)
 static size_t HASHT_NAME`'_next_pos(struct HASHT_NAME *);
 static int HASHT_NAME`'_fetch_internal(struct HASHT_NAME *, HASHT_KEY_TYPE, size_t *, const int);
 
