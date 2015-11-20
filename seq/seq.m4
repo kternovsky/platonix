@@ -19,6 +19,6 @@ define(`$$seq_pop', `dnl
 define(`$$seq_dupdef', `errprint(`Could not create seq<$2> definition $1.', _get(`SEQ_DEFINITIONS', `$2'), `is already a seq<$2>.')')
 
 define(`SEQ_DEFINITION', `ifdef(`SEQ_DEFINITIONS[$2]', `indir(`$$seq_dupdef', $@)', `indir(`$$seq_mkdef', `$1', `$2')')')
-define(`SEQ_INTERFACE', `ifelse(indir(`$$seq_defs'), `0', `', `include(_gen/seq.h.m4) indir(`$$seq_pop') $0')')
+define(`SEQ_INTERFACE', `ifelse(indir(`$$seq_defs'), `0', `', `include(_gen/seq/seq.h.m4) indir(`$$seq_pop') $0')')
 divert dnl
 ')

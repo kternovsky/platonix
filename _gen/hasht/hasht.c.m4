@@ -1,12 +1,24 @@
 dnl Hash table based on Simon Cooper's discussion of the .NET Dictionary
 dnl implementation
-static size_t HASHT_NAME`'_next_pos(struct HASHT_NAME *);
-static int HASHT_NAME`'_fetch_internal(struct HASHT_NAME *, HASHT_KEY_TYPE, size_t *, const int);
+divert(-1)
+define(`HASHT_NAME', indir(`$$hasht_typename'))
+define(`HASHT_KEY_TYPE', indir(`$$hasht_key_type'))
+define(`HASHT_VAL_TYPE', indir(`$$hasht_val_type'))
+define(`HASHT_SUF', `HASHT_NAME'_`$1')
+define(`HASHT_EXTRA_MEMBERS', indir(`$$hasht_extra_members'))
+define(`HASHT_HASH', indir(`$$hasht_hashfn'))
+define(`HASHT_KEY_CMP', indir(`$$hasht_key_eq'))
+ifelse(translit(indir(`$$hasht_key_seq'), ` '), `', `', `define(`HASHT_KEY_SEQ', translit(indir(`$$hasht_key_seq'), ` '))')
+ifelse(translit(indir(`$$hasht_val_seq'), ` '), `', `', `define(`HASHT_VAL_SEQ', translit(indir(`$$hasht_val_seq'), ` '))')
+ifelse(translit(indir(`$$hasht_kvp_seq'), ` '), `', `', `define(`HASHT_KVP_SEQ', translit(indir(`$$hasht_kvp_seq'), ` '))')
+divert dnl
+static size_t HASHT_SUF(`next_pos')(struct HASHT_NAME *);
+static int HASHT_SUF(`fetch_internal')(struct HASHT_NAME *, HASHT_KEY_TYPE, size_t *, const int);
 
-ifelse(`HASHT_KEY_SEQ',`!',`',`include(_gen/hasht/hasht.kseq.c.m4)')dnl
-ifelse(`HASHT_VAL_SEQ',`!',`',`include(_gen/hasht/hasht.vseq.c.m4)')dnl
+ifdef(`HASHT_KEY_SEQ',`include(_gen/hasht/hasht.kseq.c.m4)')dnl
+ifdef(`HASHT_VAL_SEQ',`include(_gen/hasht/hasht.vseq.c.m4)')dnl
 
-void HASHT_NAME`'_init(struct HASHT_NAME *t)
+void HASHT_SUF(`init')(struct HASHT_NAME *t)
 {
 	size_t i;
 
@@ -21,7 +33,7 @@ void HASHT_NAME`'_init(struct HASHT_NAME *t)
 	t->free = -1;
 }
 
-int HASHT_NAME`'_init2(struct HASHT_NAME *r, const struct HASHT_NAME *s)
+int HASHT_SUF(`init2')(struct HASHT_NAME *r, const struct HASHT_NAME *s)
 {
 	size_t i;
 
@@ -38,10 +50,10 @@ dnl Copy over all the real data
 	return 0;
 }
 
-int HASHT_NAME`'_ins(struct HASHT_NAME *t, HASHT_KEY_TYPE k, HASHT_VAL_TYPE v)
+int HASHT_SUF(`ins')(struct HASHT_NAME *t, HASHT_KEY_TYPE k, HASHT_VAL_TYPE v)
 {
 	const size_t hash = HASHT_HASH(k);
-	const size_t pos = HASHT_NAME`'_next_pos(t);
+	const size_t pos = HASHT_SUF(`next_pos')(t);
 	size_t idx = hash % t->cap;
 
 	ifdef(`DEBUG',`assert(t->sz < t->cap);')dnl
@@ -66,23 +78,23 @@ int HASHT_NAME`'_ins(struct HASHT_NAME *t, HASHT_KEY_TYPE k, HASHT_VAL_TYPE v)
 	return 0;
 }
 
-int HASHT_NAME`'_get(struct HASHT_NAME *t, HASHT_KEY_TYPE k, struct HASHT_NAME`'_entry *r)
+int HASHT_SUF(`get')(struct HASHT_NAME *t, HASHT_KEY_TYPE k, struct HASHT_SUF(`entry') *r)
 {
 	size_t rp;
-	if(HASHT_NAME`'_fetch_internal(t, k, &rp, 0)) return 1;
+	if(HASHT_SUF(`fetch_internal')(t, k, &rp, 0)) return 1;
 	*r = t->data[rp].entry;
 	return 0;
 }
 
-int HASHT_NAME`'_del(struct HASHT_NAME *t, HASHT_KEY_TYPE k, struct HASHT_NAME`'_entry *r)
+int HASHT_SUF(`del')(struct HASHT_NAME *t, HASHT_KEY_TYPE k, struct HASHT_SUF(`entry') *r)
 {
 	size_t rp;
-	if(HASHT_NAME`'_fetch_internal(t, k, &rp, 1)) return 1;
+	if(HASHT_SUF(`fetch_internal')(t, k, &rp, 1)) return 1;
 	*r = t->data[rp].entry;
 	return 0;
 }
 
-int HASHT_NAME`'_has(struct HASHT_NAME *t, HASHT_KEY_TYPE k)
+int HASHT_SUF(`has')(struct HASHT_NAME *t, HASHT_KEY_TYPE k)
 {
 	const size_t hash = HASHT_HASH(k);
 	const size_t idx = hash % t->cap;
@@ -105,16 +117,16 @@ int HASHT_NAME`'_has(struct HASHT_NAME *t, HASHT_KEY_TYPE k)
 	return 0;
 }
 
-int HASHT_NAME`'_update(struct HASHT_NAME *t, HASHT_KEY_TYPE k, HASHT_VAL_TYPE v)
+int HASHT_SUF(`update')(struct HASHT_NAME *t, HASHT_KEY_TYPE k, HASHT_VAL_TYPE v)
 {
 	size_t rp;
-	if(HASHT_NAME`'_fetch_internal(t, k, &rp, 0)) return 1;
+	if(HASHT_SUF(`fetch_internal')(t, k, &rp, 0)) return 1;
 
 	t->data[rp].entry.value = v;
 	return 0;
 }
 
-static size_t HASHT_NAME`'_next_pos(struct HASHT_NAME *t)
+static size_t HASHT_SUF(`next_pos')(struct HASHT_NAME *t)
 {
 dnl Find the next available data slot.
 dnl If cursor < cap we still have regular room in the array and can just put
@@ -136,7 +148,7 @@ dnl and adjust the free list to point to the next item.
 	return idx;
 }
 
-static int HASHT_NAME`'_fetch_internal(struct HASHT_NAME *t, HASHT_KEY_TYPE k, size_t *rp, const int del)
+static int HASHT_SUF(`fetch_internal')(struct HASHT_NAME *t, HASHT_KEY_TYPE k, size_t *rp, const int del)
 {
 	const size_t hash = HASHT_HASH(k);
 	const size_t idx = hash % t->cap;

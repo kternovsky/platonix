@@ -1,14 +1,15 @@
+divert(-1)
+define(`SEQ_NAME', indir(`$$seq_typename'))
+define(`SEQ_TYPE', indir(`$$seq_type'))
+define(`SEQ_SUF', `SEQ_NAME_$1')
 define(`SEQ_OPS',`int (*read)(struct SEQ_NAME *, $1 *);
 int (*next)(struct SEQ_NAME *);
-')dnl
-define(`SEQ_BI_OPS',`int (*prev)(struct SEQ_NAME *);')dnl
-define(`SEQ_RAND_OPS',`int (*to)(struct SEQ_NAME *, const size_t);')dnl
+')
+divert dnl
 struct SEQ_NAME;
-struct SEQ_NAME`'_ops
+struct SEQ_SUF(`_ops')
 {
-	SEQ_OPS(SEQ_TYPE)
-	dnl ifdef(`SEQ_BI',SEQ_BI_OPS)
-	dnl ifdef(`SEQ_RAND',SEQ_RAND_OPS)
+	SEQ_OPS(`SEQ_TYPE')
 };
 
 struct SEQ_NAME
@@ -16,3 +17,8 @@ struct SEQ_NAME
 	struct SEQ_NAME`'_ops *ops;
 	unsigned flags;
 };
+
+undefine(`SEQ_NAME')
+undefine(`SEQ_TYPE')
+undefine(`SEQ_SUF')
+undefine(`SEQ_OPS')
