@@ -7,10 +7,10 @@ define(`$$pair_err_type', `errprint(`Could not define $1 as pair<$2, $3>.' _get(
 
 define(`PAIR_TEMPLATE', `ifdef(`PAIR_NAMES[$1]', `indir(`$$pair_err_name', `$1')', dnl
 	`ifdef(`PAIR_TYPES[$2_$3]', `indir(`$$pair_err_type', `$1', `$2', `$3')', dnl
-	`_set(`PAIR_NAMES', `$1', 1)dnl
-	 _set(`PAIR_NAMES_T1', `$1', `$2')dnl
-	 _set(`PAIR_NAMES_T2', `$1', `$3')dnl
-	 _set(`PAIR_TYPES', `$2_$3', `$1')dnl
+	`	_set(`PAIR_NAMES', `$1', `$2,$3')dnl
+		_set(`PAIR_NAMES_T1', `$1', `$2')dnl
+		_set(`PAIR_NAMES_T2', `$1', `$3')dnl
+		_set(`PAIR_TYPES', `$2_$3', `$1')dnl
 	')')dnl
 ')dnl
 
@@ -22,5 +22,3 @@ undefine(`ACTIVE_PAIR')dnl
 ')dnl
 divert dnl
 ')
-PAIR_TEMPLATE(`p1', `char', `int')
-PAIR_INTERFACE(`p1')
