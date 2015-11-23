@@ -1,24 +1,22 @@
-ifdef(`SEQ_M4',,`define(`SEQ_M4',1)dnl
+ifdef(`SEQ_M4',,`define(`SEQ_M4', 1)
 include(_util/arr.m4)dnl
 divert(-1)
-pushdef(`$$seq_defs', `0')
+define(`$$seq_err_name', `errprint(`Sequence $1 is already defined as seq<'_get(`SEQ_NAMES', `$1')`>.')')
+define(`$$seq_err_none', `errprint(`Sequence $1 has not been defined.')')
+define(`$$seq_err_type', `errprint(`Could not define $1 as seq<$2>.' _get(`SEQ_TYPES', `$2') `is already defined as a sequence of that type.')')
+define(`SEQ_TEMPLATE', `ifdef(`SEQ_NAMES[$1]', `indir(`$$seq_err_name', `$1')',dnl
+	`ifdef(`SEQ_TYPES[$2]', `indir(`$$seq_err_type', `$1', `$2')', dnl
+	 `_set(`SEQ_NAMES', `$1', `$2')dnl
+	  _set(`SEQ_TYPES', `$2', `$1')dnl
+	')')')dnl
 
-define(`$$seq_mkdef', `dnl
-	_set(`SEQ_DEFINITIONS', `$2', `$1')dnl
-	pushdef(`$$seq_defs', incr(indir(`$$seq_defs')))dnl
-	pushdef(`$$seq_typename', `$1')dnl
-	pushdef(`$$seq_type', `$2')dnl
+define(`SEQ_INTERFACE', `ifdef(`SEQ_NAMES[$1]', `indir(`$$seq_iface', `$1')', `indir(`$$seq_err_none', `$1')')')
+
+define(`$$seq_iface', `define(`ACTIVE_SEQ', `$1')dnl
+include(_gen/seq/seq.h.m4)dnl
+undefine(`ACTIVE_SEQ')dnl
 ')dnl
-
-define(`$$seq_pop', `dnl
-	popdef(`$$seq_defs')dnl
-	popdef(`$$seq_typename')dnl
-	popdef(`$$seq_type')dnl
-')dnl
-
-define(`$$seq_dupdef', `errprint(`Could not create seq<$2> definition $1.', _get(`SEQ_DEFINITIONS', `$2'), `is already a seq<$2>.')')
-
-define(`SEQ_DEFINITION', `ifdef(`SEQ_DEFINITIONS[$2]', `indir(`$$seq_dupdef', $@)', `indir(`$$seq_mkdef', `$1', `$2')')')
-define(`SEQ_INTERFACE', `ifelse(indir(`$$seq_defs'), `0', `', `include(_gen/seq/seq.h.m4) indir(`$$seq_pop') $0')')
 divert dnl
-')
+')dnl
+SEQ_TEMPLATE(`seq1', `int')
+SEQ_TEMPLATE(`seq2', `int')
