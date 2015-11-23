@@ -1,29 +1,29 @@
-static int HASHT_NAME`'_kseq_read(HASHT_KEY_SEQ *, HASHT_KEY_TYPE *);
-static int HASHT_NAME`'_kseq_next(HASHT_KEY_SEQ *);
-static HASHT_KEY_SEQ`'_ops HASHT_NAME`'_key_ops =
+static int HASHT_SUF(`kseq_read')(struct HASHT_KSEQ *, HASHT_KEY *);
+static int HASHT_SUF(`kseq_next')(struct HASHT_KSEQ *);
+static struct HASHT_KSEQ`'_ops HASHT_SUF(`key_ops') =
 {
-	.read = &`'HASHT_NAME`'_kseq_read,
-	.next = &`'HASHT_NAME`'_kseq_next
+	.read = &HASHT_SUF(`kseq_read'),
+	.next = &HASHT_SUF(`kseq_next')
 };
 
-int HASHT_NAME`'_keys(struct HASHT_NAME`'_kseq *s, const struct HASHT_NAME *h)
+int HASHT_SUF(`keys')(struct HASHT_SUF(`kseq') *s, const struct HASHT_NAME *h)
 {
-	s->seq.ops = &`'HASHT_NAME`'_key_ops;
+	s->seq.ops = &HASHT_SUF(`key_ops');
 	s->ctx.h = h;
 	s->ctx.c = 0;
 	return 0;
 }
 
-static int HASHT_NAME`'_kseq_read(HASHT_KEY_SEQ *s, HASHT_KEY_TYPE *r)
+static int HASHT_SUF(`kseq_read')(struct HASHT_KSEQ *s, HASHT_KEY *r)
 {
-	const struct HASHT_NAME`'_kseq *ss = (struct HASHT_NAME`'_kseq *)s;
+	const struct HASHT_SUF(`kseq') *ss = (struct HASHT_SUF(`kseq') *)s;
 	const size_t idx = ss->ctx.c;
 	*r = ss->ctx.h->data[ss->ctx.h->index[idx]].entry.key;
 	return 0;
 }
-static int HASHT_NAME`'_kseq_next(HASHT_KEY_SEQ *s)
+static int HASHT_SUF(`kseq_next')(struct HASHT_KSEQ *s)
 {
-	struct HASHT_NAME`'_kseq *ss = (struct HASHT_NAME`'_kseq *)s;
+	struct HASHT_SUF(`kseq') *ss = (struct HASHT_SUF(`kseq') *)s;
 	if(ss->ctx.h->index[ss->ctx.c] != -1)
 		return ss->ctx.h->index[ss->ctx.c++];
 

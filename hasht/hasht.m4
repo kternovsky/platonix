@@ -1,8 +1,8 @@
 ifdef(`HASHT_M4',,`define(`HASHT_M4',1)dnl
 include(_util/arr.m4)
 divert(-1)
-define(`$$hasht_err_name', `errprint(`Pair $1 has already been defined as hasht<'_get(`HASHT_NAMES', `$1')`>.')')
-define(`$$hasht_err_none', `errprint(`Pair $1 has not been defined.')')
+define(`$$hasht_err_name', `errprint(`Hash table $1 has already been defined as hasht<'_get(`HASHT_NAMES', `$1')`>.')')
+define(`$$hasht_err_none', `errprint(`Hash table $1 has not been defined.')')
 define(`$$hasht_err_type', `errprint(`Could not define $1 as hasht<$2, $3>.' _get(`HASHT_TYPES',`$2_$3') `is already defined as a hash table of that type.')')
 define(`HASHT_TEMPLATE', `ifdef(`HASHT_NAMES[$1]', `indir(`$$hasht_err_name', `$1')', dnl
 	`ifdef(`HASHT_TYPES[$2_$3]', `indir(`$$hasht_err_type', `$1', `$2', `$3')', dnl
@@ -27,12 +27,3 @@ undefine(`ACTIVE_HASHT')dnl
 ')_dnl
 divert dnl
 ')
-
-HASHT_TEMPLATE(`hasht_ii', `int', `char', `djb2($1)', `$1 == $2')
-#include <stddef.h>
-static size_t djb2(const int k)
-{
-	return 0;
-}
-HASHT_INTERFACE(`hasht_ii')
-HASHT_IMPLEMENTATION(`hasht_ii')

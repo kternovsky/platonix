@@ -19,5 +19,3 @@ undefine(`ACTIVE_SEQ')dnl
 ')dnl
 divert dnl
 ')dnl
-SEQ_TEMPLATE(`seq1', `int')
-SEQ_TEMPLATE(`seq2', `int')

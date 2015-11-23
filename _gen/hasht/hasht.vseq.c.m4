@@ -1,29 +1,29 @@
-static int HASHT_NAME`'_vseq_read(HASHT_VAL_SEQ *, HASHT_KEY_TYPE *);
-static int HASHT_NAME`'_vseq_next(HASHT_VAL_SEQ *);
-static HASHT_VAL_SEQ`'_ops HASHT_NAME`'_key_ops =
+static int HASHT_SUF(`vseq_read')(struct HASHT_VSEQ *, HASHT_VAL *);
+static int HASHT_SUF(`vseq_next')(struct HASHT_VSEQ *);
+static struct HASHT_VSEQ`'_ops HASHT_SUF(`val_ops') =
 {
-	.read = &`'HASHT_NAME`'_vseq_read,
-	.next = &`'HASHT_NAME`'_vseq_next
+	.read = &HASHT_SUF(`vseq_read'),
+	.next = &HASHT_SUF(`vseq_next')
 };
 
-int HASHT_NAME`'_keys(struct HASHT_NAME`'_vseq *s, const struct HASHT_NAME *h)
+int HASHT_SUF(`vals')(struct HASHT_SUF(`vseq') *s, const struct HASHT_NAME *h)
 {
-	s->seq.ops = &`'HASHT_NAME`'_key_ops;
+	s->seq.ops = &HASHT_SUF(`val_ops');
 	s->ctx.h = h;
 	s->ctx.c = 0;
 	return 0;
 }
 
-static int HASHT_NAME`'_vseq_read(HASHT_VAL_SEQ *s, HASHT_VAL_TYPE *r)
+static int HASHT_SUF(`vseq_read')(struct HASHT_VSEQ *s, HASHT_VAL *r)
 {
-	const struct HASHT_NAME`'_vseq *ss = (struct HASHT_NAME`'_vseq *)s;
+	const struct HASHT_SUF(`vseq') *ss = (struct HASHT_SUF(`vseq') *)s;
 	const size_t idx = ss->ctx.c;
 	*r = ss->ctx.h->data[ss->ctx.h->index[idx]].entry.key;
 	return 0;
 }
-static int HASHT_NAME`'_vseq_next(HASHT_VAL_SEQ *s)
+static int HASHT_SUF(`vseq_next')(struct HASHT_VSEQ *s)
 {
-	struct HASHT_NAME`'_vseq *ss = (struct HASHT_NAME`'_vseq *)s;
+	struct HASHT_SUF(`vseq') *ss = (struct HASHT_SUF(`vseq') *)s;
 	if(ss->ctx.h->index[ss->ctx.c] != -1)
 		return ss->ctx.h->index[ss->ctx.c++];
 

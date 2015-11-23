@@ -1,7 +1,7 @@
-struct HASHT_NAME`'_kseq
+struct HASHT_SUF(`kseq')
 {
-	HASHT_KEY_SEQ seq;
-	struct HASHT_NAME`'_seq_ctx ctx;
+	struct HASHT_KSEQ seq;
+	struct HASHT_SUF(`seq_ctx') ctx;
 };
 
-int HASHT_NAME`'_keys(struct HASHT_NAME`'_kseq *, const struct HASHT_NAME *);
+int HASHT_SUF(`keys')(struct HASHT_SUF(`kseq') *, const struct HASHT_NAME *);

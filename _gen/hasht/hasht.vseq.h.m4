@@ -1,7 +1,7 @@
-struct HASHT_NAME`'_vseq
+struct HASHT_SUF(`vseq')
 {
-	HASHT_VAL_SEQ seq;
-	struct HASHT_NAME`'_seq_ctx ctx;
+	struct HASHT_VSEQ seq;
+	struct HASHT_SUF(`seq_ctx') ctx;
 };
 
-int HASHT_NAME`'_vals(struct HASHT_NAME`'_vseq *, const struct HASHT_NAME *);
+int HASHT_SUF(`vals')(struct HASHT_SUF(`vseq') *, const struct HASHT_NAME *);

@@ -7,10 +7,12 @@ define(`HASHT_VAL', `_get(`HASHT_NAMES_VALS', ACTIVE_HASHT)')
 define(`HASHT_SUF', `HASHT_NAME`'_`$1'')
 define(`HASHT_KEY_CMP', _get(`HASHT_KEY_EQ', ACTIVE_HASHT))
 define(`HASHT_HASH', _get(`HASHT_HFNS', ACTIVE_HASHT))
-dumpdef(`HASHT_HASH')
 divert dnl
 static size_t HASHT_SUF(`next_pos')(struct HASHT_NAME *);
 static int HASHT_SUF(`fetch_internal')(struct HASHT_NAME *, HASHT_KEY, size_t *, const int);
+ifdef(`HASHT_KSEQ', `include(_gen/hasht/hasht.kseq.c.m4)', `')
+ifdef(`HASHT_VSEQ', `include(_gen/hasht/hasht.vseq.c.m4)', `')
+
 
 void HASHT_SUF(`init')(struct HASHT_NAME *t)
 {
