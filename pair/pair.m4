@@ -1,25 +1,26 @@
 ifdef(`PAIR_M4',,`define(`PAIR_M4',1)dnl
 include(_util/arr.m4)dnl
 divert(-1)
-pushdef(`$$pair_defs', `0')
+define(`$$pair_err_name', `errprint(`Pair $1 has already been defined as pair<'_get(`PAIR_NAMES', `$1')`>.')')
+define(`$$pair_err_none', `errprint(`Pair $1 has not been defined.')')
+define(`$$pair_err_type', `errprint(`Could not define $1 as pair<$2, $3>.' _get(`PAIR_TYPES',`$2_$3') `is already defined as a sequence of that type.')')
 
-define(`$$pair_mkdef', `dnl
-	_set(`PAIR_DEFINITIONS', `$2_$3', `$1')dnl
-	pushdef(`$$pair_defs', incr(indir(`$$pair_defs'))) dnl
-	pushdef(`$$pair_typename', `$1') dnl
-	pushdef(`$$pair_first', `$2') dnl
-	pushdef(`$$pair_second', `$3')dnl
-')dnl
-define(`$$pair_pop', `dnl
-	popdef(`$$pair_defs') dnl
-	popdef(`$$pair_typename') dnl
-	popdef(`$$pair_first') dnl
-	popdef(`$$pair_second')dnl
+define(`PAIR_TEMPLATE', `ifdef(`PAIR_NAMES[$1]', `indir(`$$pair_err_name', `$1')', dnl
+	`ifdef(`PAIR_TYPES[$2_$3]', `indir(`$$pair_err_type', `$1', `$2', `$3')', dnl
+	`_set(`PAIR_NAMES', `$1', 1)dnl
+	 _set(`PAIR_NAMES_T1', `$1', `$2')dnl
+	 _set(`PAIR_NAMES_T2', `$1', `$3')dnl
+	 _set(`PAIR_TYPES', `$2_$3', `$1')dnl
+	')')dnl
 ')dnl
 
-define(`$$pair_dupdef', `errprint(`Could not create pair<$2, $3> definition $1.', _get(`PAIR_DEFINITIONS', `$2_$3'), `is already a pair<$2, $3>.')')
+define(`PAIR_INTERFACE', `ifdef(`PAIR_NAMES[$1]', `indir(`$$pair_iface', `$1')', `indir(`$$pair_err_none', `$1')')')
 
-define(`PAIR_DEFINITION', `ifdef(`PAIR_DEFINITIONS[$2_$3]', `indir(`$$pair_dupdef', $@)', `indir(`$$pair_mkdef', `$1', `$2', `$3')')')
-define(`PAIR_INTERFACE', `include(_gen/pair/pair.h.m4) indir(`$$pair_pop')')dnl
+define(`$$pair_iface', `define(`ACTIVE_PAIR', `$1')dnl
+include(_gen/pair/pair.h.m4)dnl
+undefine(`ACTIVE_PAIR')dnl
+')dnl
 divert dnl
 ')
+PAIR_TEMPLATE(`p1', `char', `int')
+PAIR_INTERFACE(`p1')
