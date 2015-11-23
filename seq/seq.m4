@@ -8,7 +8,8 @@ define(`SEQ_TEMPLATE', `ifdef(`SEQ_NAMES[$1]', `indir(`$$seq_err_name', `$1')',d
 	`ifdef(`SEQ_TYPES[$2]', `indir(`$$seq_err_type', `$1', `$2')', dnl
 	 `_set(`SEQ_NAMES', `$1', `$2')dnl
 	  _set(`SEQ_TYPES', `$2', `$1')dnl
-	')')')dnl
+	')')dnl
+')dnl
 
 define(`SEQ_INTERFACE', `ifdef(`SEQ_NAMES[$1]', `indir(`$$seq_iface', `$1')', `indir(`$$seq_err_none', `$1')')')
 
