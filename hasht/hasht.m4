@@ -1,55 +1,38 @@
 ifdef(`HASHT_M4',,`define(`HASHT_M4',1)dnl
 include(_util/arr.m4)
-include(seq/seq.m4)
-include(pair/pair.m4)
 divert(-1)
-pushdef(`$$hasht_defs', `0')
-define(`$$hasht_empty', `!')
-define(`$$hasht_reg_def', `dnl
-	_set(`HASHT_DEFINITIONS', `$2_$3', `$1')dnl
-	_set(`HASHT_DEV_PARAMS', `$1', `$@')dnl
+define(`$$hasht_err_name', `errprint(`Pair $1 has already been defined as hasht<'_get(`HASHT_NAMES', `$1')`>.')')
+define(`$$hasht_err_none', `errprint(`Pair $1 has not been defined.')')
+define(`$$hasht_err_type', `errprint(`Could not define $1 as hasht<$2, $3>.' _get(`HASHT_TYPES',`$2_$3') `is already defined as a hash table of that type.')')
+define(`HASHT_TEMPLATE', `ifdef(`HASHT_NAMES[$1]', `indir(`$$hasht_err_name', `$1')', dnl
+	`ifdef(`HASHT_TYPES[$2_$3]', `indir(`$$hasht_err_type', `$1', `$2', `$3')', dnl
+	`	_set(`HASHT_NAMES', `$1', `$2,$3')dnl
+		_set(`HASHT_NAMES_KEYS', `$1', `$2')dnl
+		_set(`HASHT_NAMES_VALS', `$1', `$3')dnl
+		_set(`HASHT_HFNS', `$1', `$4')dnl
+		_set(`HASHT_KEY_EQ', `$1', `$5')dnl
+		_set(`HASHT_TYPES', `$2_$3', `$1')dnl
+	')')dnl
 ')dnl
-define(`$$hasht_mkdef', `dnl
-	_set(`HASHT_DEFINED', `$1', 1)dnl
-	pushdef(`$$hasht_defs', incr(indir(`$$hasht_defs')))dnl
-	pushdef(`$$hasht_typename', `$1') dnl name of hash table struct
-	pushdef(`$$hasht_key_type', `$2') dnl type of key used
-	pushdef(`$$hasht_val_type', `$3') dnl type of value used
-	pushdef(`$$hasht_hashfn', `$4') dnl how to hash keys - must be an expression, not series of statements
-	pushdef(`$$hasht_key_eq', `$5') dnl how to compare keys - again, must be an expression
-	pushdef(`$$hasht_extra_members', `$6') dnl extra members if needed
-	pushdef(`$$hasht_key_seq', _get(SEQ_DEFINITIONS, indir(`$$hasht_key_type')))dnl
-	pushdef(`$$hasht_val_seq', _get(SEQ_DEFINITIONS, indir(`$$hasht_val_type')))dnl
-	pushdef(`$$hasht_kvp_seq', _get(SEQ_DEFINITIONS, _get(PAIR_DEFINITIONS, indir(`$$hasht_key_type')_`'indir(`$$hasht_val_type'))))dnl
-')dnl
+define(`HASHT_INTERFACE', `ifdef(`HASHT_NAMES[$1]', `indir(`$$hasht_iface', `$1')', `indir(`$$hasht_err_none', `$1')')')
+define(`HASHT_IMPLEMENTATION', `ifdef(`HASHT_NAMES[$1]', `indir(`$$hasht_impl', `$1')', `indir(`$$hasht_err_none', `$1')')')
 
-define(`$$hasht_mkimpl', `dnl
-	$@
-	dnl pushdef(`$$hasht_typename', `$1') dnl name of hash table struct
-	dnl pushdef(`$$hasht_key_type', `$2') dnl type of key used
-	dnl pushdef(`$$hasht_val_type', `$3') dnl type of value used
-	dnl pushdef(`$$hasht_hashfn', `$4') dnl how to hash keys - must be an expression, not series of statements
-	dnl pushdef(`$$hasht_key_eq', `$5') dnl how to compare keys - again, must be an expression
-	dnl pushdef(`$$hasht_extra_members', `$6') dnl extra members if needed
-	dnl pushdef(`$$hasht_key_seq', _get(SEQ_DEFINITIONS, indir(`$$hasht_key_type')))dnl
-	dnl pushdef(`$$hasht_val_seq', _get(SEQ_DEFINITIONS, indir(`$$hasht_val_type')))dnl
-	dnl pushdef(`$$hasht_kvp_seq', _get(SEQ_DEFINITIONS, _get(PAIR_DEFINITIONS, indir(`$$hasht_key_type')_`'indir(`$$hasht_val_type'))))dnl
+define(`$$hasht_iface', `define(`ACTIVE_HASHT', `$1')dnl
+include(_gen/hasht/hasht.h.m4)dnl
+undefine(`ACTIVE_HASHT')dnl
 ')dnl
-
-define(`$$hasht_pop', `
-	popdef(`$$hasht_defs')dnl
-	popdef(`$$hasht_typename')dnl
-	popdef(`$$hasht_key_type')dnl
-	popdef(`$$hasht_val_type')dnl
-	popdef(`$$hasht_hashfn')dnl
-	popdef(`$$hasht_key_eq')dnl
-')dnl
-
-define(`$$hasht_dupdef', `errprint(`Could not create hasht<$2, $3> definition $1.', _get(`HASHT_DEFINITIONS', `$2_$3'), `is already a hasht<$2, $3>.')')
-define(`HASHT_DEFINITION', `ifdef(`HASHT_DEFINED[$1]', `indir(`$$hasht_dupdef', $@)', `indir(`$$hasht_reg_mkdef', $@)')')
-define(`HASHT_INTERFACE', `ifelse(indir(`$$hasht_defs', `0', `', `include(_gen/hasht/hasht.h.m4) indir(`$$hasht_pop') $0')'))
-dnl define(`HASHT_IMPLEMENTATION', `ifelse(indir(`$$hasht_defs', `0', `', `include(_gen/hasht/hasht.c.m4) indir(`$$hasht_pop') $0')'))
-dnl define(`HASHT_IMPLEMENTATION', `ifelse(HASHT_DEF_PARAMS[`$1'], `', `errprint(`Could not create implementation for undefined hasht', `$1')', `indir(`$$hasht_mkimpl', HASHT_DEF_PARAMS[`$1']) include(_gen/hasht/hasht.c.m4) indir(`$$hasht_pop') $0')')
-define(`HASHT_IMPLEMENTATION', `HASHT_DEF_PARAMS[`$1']')
+define(`$$hasht_impl', `define(`ACTIVE_HASHT', `$1')dnl
+include(_gen/hasht/hasht.c.m4)dnl
+undefine(`ACTIVE_HASHT')dnl
+')_dnl
 divert dnl
 ')
+
+HASHT_TEMPLATE(`hasht_ii', `int', `char', `djb2($1)', `$1 == $2')
+#include <stddef.h>
+static size_t djb2(const int k)
+{
+	return 0;
+}
+HASHT_INTERFACE(`hasht_ii')
+HASHT_IMPLEMENTATION(`hasht_ii')
