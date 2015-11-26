@@ -13,9 +13,6 @@ define(`HASHT_TEMPLATE', `ifdef(`HASHT_NAMES[$1]', `indir(`$$hasht_err_name', `$
 		_set(`HASHT_HFNS', `$1', `$4')dnl
 		_set(`HASHT_KEY_EQ', `$1', `$5')dnl
 		_set(`HASHT_TYPES', `$2_$3', `$1')dnl
-		append(`$$hasht_def_names', `$1',`,')dnl This is for generic in future
-		append(`$$hasht_def_keys_$2', `$1')dnl
-		append(`$$hasht_kev_vals_$3', `$1')dnl
 	')')dnl
 ')dnl
 define(`HASHT_INTERFACE', `ifdef(`HASHT_NAMES[$1]', `indir(`$$hasht_iface', `$1')', `indir(`$$hasht_err_none', `$1')')')

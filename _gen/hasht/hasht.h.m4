@@ -5,10 +5,10 @@ define(`HASHT_VAL', `_get(`HASHT_NAMES_VALS', ACTIVE_HASHT)')
 define(`HASHT_SUF', `HASHT_NAME`'_`$1'')
 include(seq/seq.m4)dnl
 include(pair/pair.m4)dnl
-divert dnl
 ifelse(_get(`SEQ_TYPES', HASHT_KEY), `', `', `define(`HASHT_KSEQ', _get(`SEQ_TYPES', HASHT_KEY)) define(`HASHT_SEQUENCES',1)')
 ifelse(_get(`SEQ_TYPES', HASHT_VAL), `', `', `define(`HASHT_VSEQ', _get(`SEQ_TYPES', HASHT_VAL)) define(`HASHT_SEQUENCES',1)')
 ifelse(_get(`PAIR_TYPES', HASHT_KEY`'_`'HASHT_VAL), `', `', `ifelse(_get(`SEQ_TYPES', struct _get(`PAIR_TYPES', HASHT_KEY`'_`'HASHT_VAL)), `', `', `define(`HASHT_KVP', `_get(`PAIR_TYPES', HASHT_KEY`'_`'HASHT_VAL)') define(`HASHT_KVSEQ', `_get(`SEQ_TYPES', struct HASHT_KVP)')')')
+divert dnl
 
 struct HASHT_SUF(`entry')
 {
