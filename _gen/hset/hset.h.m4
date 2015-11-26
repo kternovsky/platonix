@@ -1,6 +1,8 @@
 divert(-1)
 define(`HSET_NAME', `ACTIVE_HSET')
 define(`HSET_VAL', `_get(`HSET_NAMES_VALS', ACTIVE_HSET)')
+define(`HSET_HASH', `_get(`HSET_HFNS', ACTIVE_HSET)')
+define(`HSET_CMP', `_get(`HSET_KEY_EQ', ACTIVE_HSET)')
 define(`HSET_SUF', `HSET_NAME`'_`$1'')
 include(seq/seq.m4)
 ifelse(_get(`SEQ_TYPES', HSET_VAL), `', `', `define(`HSET_VSEQ', _get(`SEQ_TYPES', HSET_VAL))')
