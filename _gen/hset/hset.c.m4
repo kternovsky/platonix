@@ -2,11 +2,13 @@ divert(-1)
 define(`HSET_NAME', `ACTIVE_HSET')
 define(`HSET_VAL', `_get(`HSET_NAMES_VALS', ACTIVE_HSET)')
 define(`HSET_SUF', `HSET_NAME`'_`$1'')
+define(`HSET_CMP', _get(`HSET_KEY_EQ', ACTIVE_HSET))
+define(`HSET_HASH', _get(`HSET_HFNS', ACTIVE_HSET))
 include(seq/seq.m4)
 ifelse(_get(`SEQ_TYPES', HSET_VAL), `', `', `define(`HSET_VSEQ', _get(`SEQ_TYPES', HSET_VAL))')
 divert dnl
 static size_t HSET_SUF(`next_pos')(struct HSET_NAME *);
-static int HSET_SUF(`fetch_internal')(struct HSET_NAME *, HSET_VAL, size_t *, const int);
+static int HSET_SUF(`fetch_internal')(struct HSET_NAME *, const HSET_VAL, size_t *, const int);
 ifdef(`HSET_VSEQ', `include(_gen/hset/hset.vseq.c.m4)', `')
 
 
@@ -53,17 +55,17 @@ int HSET_SUF(`ins')(struct HSET_NAME *t, HSET_VAL v)
 	return 0;
 }
 
-int HSET_SUF(`del')(struct HSET_NAME *t, HSET_KEY k, HSET_VAL *r)
+int HSET_SUF(`del')(struct HSET_NAME *t, const HSET_VAL k, HSET_VAL *v)
 {
 	size_t rp;
 	if(HSET_SUF(`fetch_internal')(t, k, &rp, 1)) return 1;
-	*r = t->data[rp].value;
+	*v = t->data[rp].value;
 	return 0;
 }
 
 int HSET_SUF(`has')(const struct HSET_NAME *t, HSET_VAL v)
 {
-	const size_t hash = HSET_HASH(k);
+	const size_t hash = HSET_HASH(`v');
 	const size_t idx = hash % t->cap;
 	size_t pos = t->index[idx];
 
@@ -107,23 +109,23 @@ int HSET_SUF(`union')(struct HSET_NAME *r, const struct HSET_NAME *s1, const str
 		do
 		{
 			HSET_VAL tmp;
-			if(bs.read(&bs, &tmp)) return 1;
+			if(bs.seq.ops->read(&bs.seq, &tmp)) return 1;
 
 			HSET_SUF(`ins')(r, tmp);
 			sz++;
-		} while(!bs.next(&bs));
+		} while(!bs.seq.ops->next(&bs.seq));
 
 	if(s->sz)
 		do
 		{
 			HSET_VAL tmp;
-			if(ss.read(&ss, &tmp)) return 1;
+			if(ss.seq.ops->read(&ss.seq, &tmp)) return 1;
 
 			if(HSET_SUF(`has')(s1, tmp)) continue;
 
 			HSET_SUF(`ins')(r, tmp);
 			sz++;
-		} while(!ss.next(&ss));
+		} while(!ss.seq.ops->next(&ss.seq));
 
 	r->sz = sz;
 	return 0;
@@ -152,18 +154,18 @@ int HSET_SUF(`intersection')(struct HSET_NAME *r, const struct HSET_NAME *s1, co
 		return 0;
 	}
 
-	if!HSET_SUF(`iter')(&ss, s)) return 1;
+	if(!HSET_SUF(`iter')(&ss, s)) return 1;
 
 	do
 	{
 		HSET_VAL tmp;
 
-		if(ss.read(&ss, &tmp)) return 1;
+		if(ss.seq.ops->read(&ss.seq, &tmp)) return 1;
 
-		if(!HSET_SUF(`has')(bs, tmp)) continue;
+		if(!HSET_SUF(`has')(b, tmp)) continue;
 
 		HSET_SUF(`ins')(r, tmp);
-	} while(!ss.next(&ss));
+	} while(!ss.seq.ops->next(&ss.seq));
 
 	r->sz = sz;
 	return 0;
@@ -188,10 +190,10 @@ int HSET_SUF(`diff')(struct HSET_NAME *r, const struct HSET_NAME *s1, const stru
 		{
 			HSET_VAL tmp;
 
-			if(se.read(&tmp, &se)) return 1;
+			if(se.seq.ops->read(&se.seq, &tmp)) return 1;
 
 			HSET_SUF(`ins')(r, tmp);
-		} while(!se.next(&se);
+		} while(!se.seq.ops->next(&se.seq));
 
 		return 0;
 	}
@@ -200,12 +202,12 @@ int HSET_SUF(`diff')(struct HSET_NAME *r, const struct HSET_NAME *s1, const stru
 	{
 		HSET_VAL tmp;
 
-		if(se.read(&tmp, &se)) return 1;
+		if(se.seq.ops->read(&se.seq, &tmp)) return 1;
 
 		if(HSET_SUF(`has')(s2, tmp)) continue;
 
 		HSET_SUF(`ins')(r, tmp);
-	} while(!se.next(&se);
+	} while(!se.seq.ops->next(&se.seq));
 
 	return 0;
 
@@ -222,10 +224,10 @@ int HSET_SUF(`is_subset')(const struct HSET_NAME *s1, const struct HSET_NAME *s2
 	{
 		HSET_VAL tmp;
 
-		if(se.read(&tmp, &se)) return -1;
+		if(se.seq.ops->read(&se.seq, &tmp)) return -1;
 
 		if(!HSET_SUF(`has')(s2, tmp)) return 0;
-	} while(!se.next(&se));
+	} while(!se.seq.ops->next(&se.seq));
 
 	return 1;
 }
@@ -254,7 +256,7 @@ dnl and adjust the free list to point to the next item.
 
 static int HSET_SUF(`fetch_internal')(struct HSET_NAME *t, HSET_VAL v, size_t *rp, const int del)
 {
-	const size_t hash = HSET_HASH(k);
+	const size_t hash = HSET_HASH(`v');
 	const size_t idx = hash % t->cap;
 	size_t pos = t->index[idx];
 
@@ -300,3 +302,10 @@ static int HSET_SUF(`fetch_internal')(struct HSET_NAME *t, HSET_VAL v, size_t *r
 
 	return 1;
 }
+divert(-1) dnl
+undefine(`HSET_NAME')
+undefine(`HSET_VAL')
+undefine(`HSET_SUF')
+undefine(`HSET_CMP')
+undefine(`HSET_HASH')
+divert dnl

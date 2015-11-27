@@ -28,7 +28,7 @@ struct HSET_NAME
 void HSET_SUF(`init')(struct HSET_NAME *);
 int HSET_SUF(`init2')(struct HSET_NAME *, const struct HSET_NAME *);
 int HSET_SUF(`ins')(struct HSET_NAME *, const HSET_VAL);
-int HSET_SUF(`del')(struct HSET_NAME *, HSET_VAL *);
+int HSET_SUF(`del')(struct HSET_NAME *, const HSET_VAL, HSET_VAL *);
 int HSET_SUF(`has')(const struct HSET_NAME *, const HSET_VAL);
 ifdef(`HSET_VSEQ',`dnl
 int HSET_SUF(`union')(struct HSET_NAME *, const struct HSET_NAME *, const struct HSET_NAME *);
@@ -36,3 +36,8 @@ int HSET_SUF(`intersection')(struct HSET_NAME *, const struct HSET_NAME *, const
 int HSET_SUF(`diff')(struct HSET_NAME *, const struct HSET_NAME *, const struct HSET_NAME *);
 int HSET_SUF(`is_subset')(const struct HSET_NAME *, const struct HSET_NAME *);
 include(_gen/hset/hset.vseq.h.m4)')dnl
+undefine(`HSET_NAME')
+undefine(`HSET_VAL')
+undefine(`HSET_HASH')
+undefine(`HSET_CMP')
+undefine(`HSET_SUF')
