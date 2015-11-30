@@ -103,7 +103,7 @@ int HSET_SUF(`union')(struct HSET_NAME *r, const struct HSET_NAME *s1, const str
 		s = s1;
 	}
 
-	if(!HSET_SUF(`iter')(&bs, b) || !HSET_SUF(`iter')(&ss, s)) return 1;
+	if(HSET_SUF(`iter')(&bs, b) || HSET_SUF(`iter')(&ss, s)) return 1;
 
 	if(b->sz)
 		do
@@ -121,7 +121,7 @@ int HSET_SUF(`union')(struct HSET_NAME *r, const struct HSET_NAME *s1, const str
 			HSET_VAL tmp;
 			if(ss.seq.ops->read(&ss.seq, &tmp)) return 1;
 
-			if(HSET_SUF(`has')(s1, tmp)) continue;
+			if(HSET_SUF(`has')(b, tmp)) continue;
 
 			HSET_SUF(`ins')(r, tmp);
 			sz++;
@@ -154,7 +154,7 @@ int HSET_SUF(`intersection')(struct HSET_NAME *r, const struct HSET_NAME *s1, co
 		return 0;
 	}
 
-	if(!HSET_SUF(`iter')(&ss, s)) return 1;
+	if(HSET_SUF(`iter')(&ss, s)) return 1;
 
 	do
 	{

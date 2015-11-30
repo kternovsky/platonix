@@ -1,7 +1,7 @@
 struct HSET_SUF(`seq_ctx')
 {
 	const struct HSET_NAME *h;
-	size_t c;
+	size_t b, d;
 };
 
 struct HSET_SUF(`vseq')
