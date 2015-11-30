@@ -5,4 +5,6 @@ HSET_TEMPLATE(`set_i', `int', `$1', `$1 == $2')dnl
 #include <stddef.h>
 SEQ_INTERFACE(`seq_i')
 HSET_INTERFACE(`set_i')
+dumpdef(`HSET_GENERICS')
+HSET_GENERICS
 HSET_IMPLEMENTATION(`set_i')
