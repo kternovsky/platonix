@@ -36,8 +36,10 @@ int HSET_SUF(`intersection')(struct HSET_NAME *, const struct HSET_NAME *, const
 int HSET_SUF(`diff')(struct HSET_NAME *, const struct HSET_NAME *, const struct HSET_NAME *);
 int HSET_SUF(`is_subset')(const struct HSET_NAME *, const struct HSET_NAME *);
 include(_gen/hset/hset.vseq.h.m4)')dnl
+divert(-1)
 undefine(`HSET_NAME')
 undefine(`HSET_VAL')
 undefine(`HSET_HASH')
 undefine(`HSET_CMP')
 undefine(`HSET_SUF')
+divert dnl
