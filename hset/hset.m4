@@ -1,5 +1,7 @@
 ifdef(`HSET_M4',,`define(`HSET_M4',1)dnl
+divert(-1)dnl
 include(_util/arr.m4)dnl
+divert(-1)dnl
 include(_util/append.m4)dnl
 divert(-1)dnl
 define(`$$hset_err_name', `errprint(`Hash table $1 has already been defined as hset<'_get(`HSET_NAMES', `$1')`>.')')
@@ -24,6 +26,6 @@ undefine(`ACTIVE_HSET')dnl
 define(`$$hset_impl', `define(`ACTIVE_HSET', `$1')dnl
 include(_gen/hset/hset.c.m4)dnl
 undefine(`ACTIVE_HSET')dnl
-')_dnl
+')dnl
 divert dnl
 ')

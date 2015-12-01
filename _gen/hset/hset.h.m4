@@ -28,11 +28,8 @@ struct HSET_NAME
 };
 
 void HSET_SUF(`init')(struct HSET_NAME *);
-append(`$$hset_generic_init', struct HSET_NAME *: HSET_SUF(`init')`(HSet)@')dnl
 int HSET_SUF(`init2')(struct HSET_NAME *, const struct HSET_NAME *);
-append(`$$hset_generic_init2', struct HSET_NAME *: HSET_SUF(`init2')`(HSet1, HSet2)@')dnl
 int HSET_SUF(`ins')(struct HSET_NAME *, const HSET_VAL);
-append(`$$hset_generic_ins', struct HSET_NAME *: HSET_SUF(`ins')`(HSet, Val)@')dnl
 int HSET_SUF(`del')(struct HSET_NAME *, const HSET_VAL, HSET_VAL *);
 int HSET_SUF(`has')(const struct HSET_NAME *, const HSET_VAL);
 ifdef(`HSET_VSEQ',`dnl
